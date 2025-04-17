@@ -1,0 +1,9 @@
+import java.util.List;
+
+public class StudentView {
+    public void displayAllStudents(List<Student> students) {
+        for (Student student : students) {
+            System.out.println(student.getStudentID() + " | " + student.getName() + " | " + student.getDepartment() + " | " + student.getMarks());
+        }
+    }
+}
