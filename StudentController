@@ -1,0 +1,69 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class StudentController {
+    private static final String URL = "jdbc:mysql://localhost:3306/your_database";
+    private static final String USER = "root";
+    private static final String PASSWORD = "your_password";
+
+    public void addStudent(Student student) {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String query = "INSERT INTO Student (Name, Department, Marks) VALUES (?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, student.getName());
+            stmt.setString(2, student.getDepartment());
+            stmt.setDouble(3, student.getMarks());
+            stmt.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Student> getAllStudents() {
+        List<Student> students = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String query = "SELECT * FROM Student";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                int studentID = rs.getInt("StudentID");
+                String name = rs.getString("Name");
+                String department = rs.getString("Department");
+                double marks = rs.getDouble("Marks");
+                students.add(new Student(studentID, name, department, marks));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return students;
+    }
+
+    public void updateStudent(Student student) {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String query = "UPDATE Student SET Name = ?, Department = ?, Marks = ? WHERE StudentID = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, student.getName());
+            stmt.setString(2, student.getDepartment());
+            stmt.setDouble(3, student.getMarks());
+            stmt.setInt(4, student.getStudentID());
+            stmt.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteStudent(int studentID) {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String query = "DELETE FROM Student WHERE StudentID = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, studentID);
+            stmt.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
